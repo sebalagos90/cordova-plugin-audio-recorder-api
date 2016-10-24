@@ -11,6 +11,9 @@ import android.media.AudioManager;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.content.Context;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 import java.io.FileInputStream;
 import java.io.File;
@@ -21,11 +24,13 @@ public class AudioRecorderAPI extends CordovaPlugin {
   private MediaRecorder myRecorder;
   private String outputFile;
   private CountDownTimer countDowntimer;
+  private String _audioBase64 = "";
 
   @Override
   public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
     Context context = cordova.getActivity().getApplicationContext();
     Integer seconds;
+
     if (args.length() >= 1) {
       seconds = args.getInt(0);
     } else {
@@ -108,9 +113,27 @@ public class AudioRecorderAPI extends CordovaPlugin {
   private void stopRecord(final CallbackContext callbackContext) {
     myRecorder.stop();
     myRecorder.release();
+    byte[] audioBytes;
+    _audioBase64 = "";
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      File audioFile = new File(outputFile);
+      FileInputStream fis = new FileInputStream(audioFile);
+      byte[] buf = new byte[1024];
+      int n;
+      while (-1 != (n = fis.read(buf)))
+        baos.write(buf, 0, n);
+      audioBytes = baos.toByteArray();
+
+      // Here goes the Base64 string
+      _audioBase64 = Base64.encodeToString(audioBytes, Base64.DEFAULT);
+    } catch(Exception e){
+      _audioBase64 = "";
+    }
+
     cordova.getThreadPool().execute(new Runnable() {
       public void run() {
-        callbackContext.success(outputFile);
+        callbackContext.success(_audioBase64);
       }
     });
   }
