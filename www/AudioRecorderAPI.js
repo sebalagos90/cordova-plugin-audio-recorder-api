@@ -9,9 +9,9 @@ AudioRecorderAPI.prototype.stop = function (successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, "AudioRecorderAPI", "stop", []);
 };
 
-// AudioRecorderAPI.prototype.playback = function (successCallback, errorCallback) {
-//   cordova.exec(successCallback, errorCallback, "AudioRecorderAPI", "playback", []);
-// };
+AudioRecorderAPI.prototype.playFromBase64 = function (base64String, successCallback, errorCallback) {
+  cordova.exec(successCallback, errorCallback, "AudioRecorderAPI", "playback", [base64String]);
+};
 
 AudioRecorderAPI.install = function () {
   if (!window.plugins) {

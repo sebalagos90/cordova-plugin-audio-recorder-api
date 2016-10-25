@@ -12,8 +12,10 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.content.Context;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.UUID;
 import java.io.FileInputStream;
 import java.io.File;
@@ -24,21 +26,19 @@ public class AudioRecorderAPI extends CordovaPlugin {
   private MediaRecorder myRecorder;
   private String outputFile;
   private CountDownTimer countDowntimer;
-  private String _audioBase64 = "";
+
 
   @Override
   public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
     Context context = cordova.getActivity().getApplicationContext();
     Integer seconds;
-
+    outputFile = context.getFilesDir().getAbsoluteFile() + "/tempAudio" + ".m4a";
     if (args.length() >= 1) {
       seconds = args.getInt(0);
     } else {
       seconds = 7;
     }
     if (action.equals("record")) {
-      outputFile = context.getFilesDir().getAbsoluteFile() + "/"
-        + UUID.randomUUID().toString() + ".m4a";
       myRecorder = new MediaRecorder();
       myRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
       myRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -76,34 +76,9 @@ public class AudioRecorderAPI extends CordovaPlugin {
       return true;
     }
 
-    if (action.equals("playback")) {
-      MediaPlayer mp = new MediaPlayer();
-      mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-      try {
-        FileInputStream fis = new FileInputStream(new File(outputFile));
-        mp.setDataSource(fis.getFD());
-      } catch (IllegalArgumentException e) {
-        e.printStackTrace();
-      } catch (SecurityException e) {
-        e.printStackTrace();
-      } catch (IllegalStateException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      try {
-        mp.prepare();
-      } catch (IllegalStateException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-        public void onCompletion(MediaPlayer mp) {
-          callbackContext.success("playbackComplete");
-        }
-      });
-      mp.start();
+    if (action.equals("playFromBase64")) {
+      String base64Data = args.getString(0);
+      decodeAudioAndPlay(base64Data, context, callbackContext);
       return true;
     }
 
@@ -113,11 +88,21 @@ public class AudioRecorderAPI extends CordovaPlugin {
   private void stopRecord(final CallbackContext callbackContext) {
     myRecorder.stop();
     myRecorder.release();
+    final String audioData = audioToBase64(outputFile);
+
+    cordova.getThreadPool().execute(new Runnable() {
+      public void run() {
+        callbackContext.success(audioData);
+      }
+    });
+  }
+
+  private String audioToBase64(String urlAudio) {
     byte[] audioBytes;
-    _audioBase64 = "";
+    String _audioBase64 = "";
     try {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      File audioFile = new File(outputFile);
+      File audioFile = new File(urlAudio);
       FileInputStream fis = new FileInputStream(audioFile);
       byte[] buf = new byte[1024];
       int n;
@@ -130,12 +115,29 @@ public class AudioRecorderAPI extends CordovaPlugin {
     } catch(Exception e){
       _audioBase64 = "";
     }
+    return _audioBase64;
+  }
 
-    cordova.getThreadPool().execute(new Runnable() {
-      public void run() {
-        callbackContext.success(_audioBase64);
+  private void decodeAudioAndPlay(String base64Audio, Context context, CallbackContext callbackContext) {
+    try{
+      File audioFile = new File(outputFile);
+      FileOutputStream fos = new FileOutputStream(audioFile);
+      fos.write(Base64.decode(base64Audio.getBytes(), Base64.DEFAULT));
+      fos.close();
+      try {
+        MediaPlayer mp = new MediaPlayer();
+        mp.setDataSource(filePath);
+        mp.prepare();
+        mp.start();
+        callbackContext.success();
+      } catch(Exception e) {
+        Log.e("decodeAudioAndPlay", e.toString());
+        callbackContext.error(e.toString());
       }
-    });
+    } catch(Exception e) {
+      Log.e("decodeAudioAndPlay", e.toString());
+      callbackContext.error(e.toString());
+    }
   }
 
 }
