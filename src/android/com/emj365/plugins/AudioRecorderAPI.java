@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.CountDownTimer;
 import android.content.Context;
 import android.util.Base64;
@@ -28,12 +29,13 @@ public class AudioRecorderAPI extends CordovaPlugin {
     Context context = cordova.getActivity().getApplicationContext();
     Integer seconds;
     outputFile = context.getFilesDir().getAbsoluteFile() + "/tempAudio" + ".m4a";
-    if (args.length() >= 1) {
-      seconds = args.getInt(0);
-    } else {
-      seconds = 7;
-    }
+
     if (action.equals("record")) {
+      if (args.length() >= 1) {
+        seconds = args.getInt(0);
+      } else {
+        seconds = 7;
+      }
       myRecorder = new MediaRecorder();
       myRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
       myRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -73,7 +75,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
 
     if (action.equals("playFromBase64")) {
       String base64Data = args.getString(0);
-      decodeAudioAndPlay(base64Data, callbackContext);
+      decodeAudioAndPlay(base64Data, context, callbackContext);
       return true;
     }
 
@@ -113,7 +115,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
     return _audioBase64;
   }
 
-  private void decodeAudioAndPlay(String base64Audio, CallbackContext callbackContext) {
+  private void decodeAudioAndPlay(String base64Audio, Context context, CallbackContext callbackContext) {
     try{
       File audioFile = new File(outputFile);
       FileOutputStream fos = new FileOutputStream(audioFile);
@@ -121,9 +123,15 @@ public class AudioRecorderAPI extends CordovaPlugin {
       fos.close();
       try {
         MediaPlayer mp = new MediaPlayer();
-        mp.setDataSource(fos.getFD());
+        mp.setDataSource(context, Uri.parse(outputFile));
         mp.prepare();
         mp.start();
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+          @Override
+          public void onCompletion(MediaPlayer mediaPlayer) {
+            mediaPlayer.release();
+          }
+        });
         callbackContext.success();
       } catch(Exception e) {
         Log.e("decodeAudioAndPlay", e.toString());
