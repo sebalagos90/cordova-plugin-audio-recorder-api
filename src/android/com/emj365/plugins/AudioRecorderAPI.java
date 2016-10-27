@@ -2,24 +2,19 @@ package com.emj365.plugins;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
-import android.media.AudioManager;
 import android.os.CountDownTimer;
-import android.os.Environment;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
-import java.util.UUID;
 import java.io.FileInputStream;
 import java.io.File;
-import java.io.IOException;
 
 public class AudioRecorderAPI extends CordovaPlugin {
 
@@ -78,7 +73,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
 
     if (action.equals("playFromBase64")) {
       String base64Data = args.getString(0);
-      decodeAudioAndPlay(base64Data, context, callbackContext);
+      decodeAudioAndPlay(base64Data, callbackContext);
       return true;
     }
 
@@ -118,7 +113,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
     return _audioBase64;
   }
 
-  private void decodeAudioAndPlay(String base64Audio, Context context, CallbackContext callbackContext) {
+  private void decodeAudioAndPlay(String base64Audio, CallbackContext callbackContext) {
     try{
       File audioFile = new File(outputFile);
       FileOutputStream fos = new FileOutputStream(audioFile);
@@ -126,7 +121,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
       fos.close();
       try {
         MediaPlayer mp = new MediaPlayer();
-        mp.setDataSource(filePath);
+        mp.setDataSource(fos.getFD());
         mp.prepare();
         mp.start();
         callbackContext.success();
