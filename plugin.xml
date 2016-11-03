@@ -20,6 +20,10 @@
     <clobbers target="window.plugins.audioRecorderAPI" />
   </js-module>
 
+  <dependency id="cordova-plugin-android-permissions@0.10.0" />
+  <dependency id="cordova-plugin-device@1.1.3" />
+  
+
   <!-- ios -->
   <platform name="ios">
     <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
