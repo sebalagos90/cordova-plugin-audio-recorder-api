@@ -11,6 +11,7 @@
   CDVInvokedUrlCommand *_command;
 }
 
+- (void)checkRecordPermissions:(CDVInvokedUrlCommand*)command;
 - (void)record:(CDVInvokedUrlCommand*)command;
 - (void)stop:(CDVInvokedUrlCommand*)command;
 - (void)playFromBase64:(CDVInvokedUrlCommand*)command;
