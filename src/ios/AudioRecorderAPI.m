@@ -15,11 +15,11 @@
                 [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
                     if (granted) {
                         // Microphone enabled code
-                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"FIRST_TIME_PERMISSIONS_GRANTED"];
+                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"FT_GRANTED"];
                     }
                     else {
                         // Microphone disabled code
-                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"NO_PERMISSIONS_GRANTED"];
+                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"NOT_GRANTED"];
                     }
                     //We have to resolve here, because the plugin doesn't resolve with the pluginResult at the bottom of the method
                     //when the app shows the alertview to grand mic permissions for the first time. 
@@ -29,14 +29,14 @@
             }
             case AVAudioSessionRecordPermissionDenied:
                 // direct to settings...
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"NO_PERMISSIONS_GRANTED"];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"NOT_GRANTED"];
                 break;
             case AVAudioSessionRecordPermissionGranted:
                 // mic access ok...
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"PERMISSIONS_GRANTED"];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"GRANTED"];
                 break;
             default:
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"NO_PERMISSIONS_GRANTED"];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"NOT_GRANTED"];
                 // this should not happen.. maybe throw an exception.
                 break;
         }
