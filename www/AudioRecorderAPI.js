@@ -8,8 +8,12 @@ AudioRecorderAPI.prototype.checkRecordPermissions = function (callback) {
     var permissions = cordova.plugins.permissions;
     permissions.hasPermission(permissions.RECORD_AUDIO, function(status){
       if(!status.hasPermission){
-        permissions.requestPermission(permissions.RECORD_AUDIO, function(){
-          callback('GRANTED');
+        permissions.requestPermission(permissions.RECORD_AUDIO, function(response){
+          if (response.hasPermission) {
+            callback('FT_GRANTED');
+          } else {
+            callback('NOT_GRANTED');
+          }
         }, function(){
           callback('NOT_GRANTED');
         });
