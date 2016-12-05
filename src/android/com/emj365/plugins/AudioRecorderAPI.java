@@ -28,7 +28,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
   public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
     Context context = cordova.getActivity().getApplicationContext();
     Integer seconds;
-    outputFile = context.getFilesDir().getAbsoluteFile() + "/tempAudio" + ".m4a";
+    outputFile = context.getFilesDir().getAbsoluteFile() + "/tempAudio" + ".wav";
 
     if (action.equals("record")) {
       if (args.length() >= 1) {
@@ -36,13 +36,14 @@ public class AudioRecorderAPI extends CordovaPlugin {
       } else {
         seconds = 7;
       }
+
       myRecorder = new MediaRecorder();
       myRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
       myRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-      myRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+      myRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
       myRecorder.setAudioSamplingRate(44100);
-      myRecorder.setAudioChannels(1);
-      myRecorder.setAudioEncodingBitRate(32000);
+      myRecorder.setAudioChannels(2);
+      myRecorder.setAudioEncodingBitRate(96000);
       myRecorder.setOutputFile(outputFile);
 
       try {

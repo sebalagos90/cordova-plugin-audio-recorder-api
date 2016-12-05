@@ -19,7 +19,7 @@
                     }
                     else {
                         // Microphone disabled code
-                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"NOT_GRANTED"];
+                        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"FT_NOT_GRANTED"];
                     }
                     //We have to resolve here, because the plugin doesn't resolve with the pluginResult at the bottom of the method
                     //when the app shows the alertview to grand mic permissions for the first time. 
@@ -68,14 +68,15 @@
         {
             NSLog(@"%@ %ld %@", [err domain], [err code], [[err userInfo] description]);
         }
-        
-        NSMutableDictionary *recordSettings = [[NSMutableDictionary alloc] init];
-        [recordSettings setObject:[NSNumber numberWithInt: kAudioFormatMPEG4AAC] forKey: AVFormatIDKey];
-        [recordSettings setObject:[NSNumber numberWithFloat:8000.0] forKey: AVSampleRateKey];
-        [recordSettings setObject:[NSNumber numberWithInt:1] forKey:AVNumberOfChannelsKey];
-        [recordSettings setObject:[NSNumber numberWithInt:12000] forKey:AVEncoderBitRateKey];
-        [recordSettings setObject:[NSNumber numberWithInt:8] forKey:AVLinearPCMBitDepthKey];
-        [recordSettings setObject:[NSNumber numberWithInt: AVAudioQualityMax] forKey: AVEncoderAudioQualityKey];
+
+        NSDictionary *recordSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                  [NSNumber numberWithFloat: 44100.0],AVSampleRateKey,
+                                  [NSNumber numberWithInt: kAudioFormatLinearPCM],AVFormatIDKey,
+                                  [NSNumber numberWithInt:16],AVLinearPCMBitDepthKey,
+                                  [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
+                                  [NSNumber numberWithBool:NO],AVLinearPCMIsBigEndianKey,
+                                  [NSNumber numberWithBool:NO],AVLinearPCMIsFloatKey,
+                                  [NSNumber numberWithInt: AVAudioQualityMin],AVEncoderAudioQualityKey,nil];
         
         // Create a new dated file
         recorderFilePath = [NSString stringWithFormat:@"%@/%@.m4a", RECORDINGS_FOLDER, @"tempAudio"];
