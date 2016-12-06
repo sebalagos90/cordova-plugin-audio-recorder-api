@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
+import android.media.AudioFormat;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.content.Context;
@@ -40,10 +41,10 @@ public class AudioRecorderAPI extends CordovaPlugin {
       myRecorder = new MediaRecorder();
       myRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
       myRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-      myRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
-      myRecorder.setAudioSamplingRate(44100);
-      myRecorder.setAudioChannels(2);
-      myRecorder.setAudioEncodingBitRate(96000);
+      myRecorder.setAudioEncoder(AudioFormat.ENCODING_PCM_16BIT);
+      myRecorder.setAudioSamplingRate(352800);
+      myRecorder.setAudioChannels(1);
+      myRecorder.setAudioEncodingBitRate(128000);
       myRecorder.setOutputFile(outputFile);
 
       try {
@@ -116,7 +117,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
     return _audioBase64;
   }
 
-  private void decodeAudioAndPlay(String base64Audio, Context context, CallbackContext callbackContext) {
+  private void decodeAudioAndPlay(String base64Audio, Context context, final CallbackContext callbackContext) {
     try{
       File audioFile = new File(outputFile);
       FileOutputStream fos = new FileOutputStream(audioFile);
@@ -131,9 +132,9 @@ public class AudioRecorderAPI extends CordovaPlugin {
           @Override
           public void onCompletion(MediaPlayer mediaPlayer) {
             mediaPlayer.release();
+            callbackContext.success();
           }
         });
-        callbackContext.success();
       } catch(Exception e) {
         Log.e("decodeAudioAndPlay", e.toString());
         callbackContext.error(e.toString());

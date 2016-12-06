@@ -79,7 +79,7 @@
                                   [NSNumber numberWithInt: AVAudioQualityMin],AVEncoderAudioQualityKey,nil];
         
         // Create a new dated file
-        recorderFilePath = [NSString stringWithFormat:@"%@/%@.m4a", RECORDINGS_FOLDER, @"tempAudio"];
+        recorderFilePath = [NSString stringWithFormat:@"%@/%@.wav", RECORDINGS_FOLDER, @"tempAudio"];
         NSLog(@"recording file path: %@", recorderFilePath);
         
         NSURL *url = [NSURL fileURLWithPath:recorderFilePath];
