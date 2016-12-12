@@ -41,7 +41,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
   int bufferSize;
   Thread recordingThread;
   File rawOutputFile, waveOutputFile;
-  CallbackContext stopCallback;
+  CallbackContext recordCallbackContext;
 
 
   @Override
@@ -61,7 +61,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
       } else {
         seconds = 7;
       }
-
+      recordCallbackContext = callbackContext;
       bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE,
               AudioFormat.CHANNEL_IN_MONO,
               AudioFormat.ENCODING_PCM_16BIT);
@@ -80,7 +80,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
 
       if(audioRecorder.getState() != AudioRecord.STATE_INITIALIZED) {
         Log.e(TAG, "Audio audioRecorder can not been initialized D:");
-        callbackContext.error("Audio audioRecorder can not been initialized D:");
+        recordCallbackContext.error("Audio audioRecorder can not been initialized D:");
         return false;
       }
 
@@ -125,7 +125,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
           waveOutputFile = new File(waveOutputURL);
           try{
             rawToWave(rawOutputFile, waveOutputFile);
-            stopCallback.success(waveOutputURL);
+            recordCallbackContext.success(waveOutputURL);
           } catch (IOException e) {
             Log.e(TAG, e.toString());
           }
@@ -140,12 +140,10 @@ public class AudioRecorderAPI extends CordovaPlugin {
         }
       };
       countDowntimer.start();
-      callbackContext.success();
       return true;
     }
 
     if (action.equals("stop")) {
-      stopCallback = callbackContext;
       countDowntimer.cancel();
       stopRecord();
       return true;
@@ -165,7 +163,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
       isRecording = false;
     }
     else {
-      stopCallback.success();
+      recordCallbackContext.error("Stop record error");
     }
   }
   private void decodeAudioAndPlay(String base64Audio, Context context, final CallbackContext callbackContext) {
