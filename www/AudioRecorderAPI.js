@@ -1,26 +1,40 @@
+/*globals cordova, device*/
+'use strict';
 function AudioRecorderAPI() {
 }
 AudioRecorderAPI.prototype.PERMISSIONS_GRANTED = 'GRANTED';
-AudioRecorderAPI.prototype.record = function (successCallback, errorCallback, duration) {
+AudioRecorderAPI.prototype.checkRecordPermissions = function (callback) {
   if(device && device.platform === 'Android' && cordova && cordova.plugins && cordova.plugins.permissions){
-    permissions = cordova.plugins.permissions;
+    var permissions = cordova.plugins.permissions;
     permissions.hasPermission(permissions.RECORD_AUDIO, function(status){
       if(!status.hasPermission){
-        permissions.requestPermission(permissions.RECORD_AUDIO, function(){
-          errorCallback('GRANTED');
+        permissions.requestPermission(permissions.RECORD_AUDIO, function(response){
+          if (response.hasPermission) {
+            callback('FT_GRANTED');
+          } else {
+            callback('NOT_GRANTED');
+          }
         }, function(){
-          errorCallback('NO_PERMISSIONS_GRANTED');
+          callback('NOT_GRANTED');
         });
       }
       else {
-        cordova.exec(successCallback, errorCallback, "AudioRecorderAPI", "record", duration ? [duration] : []);
+        callback('GRANTED');
       }
     }, null);
+  } else{
+    cordova.exec(function (iosPermissions){
+      if (iosPermissions === 'GRANTED') {
+        callback('GRANTED');
+      } else {
+        callback(iosPermissions);
+      }
+    }, null, "AudioRecorderAPI", "checkRecordPermissions", []);
   }
-  else{
-    cordova.exec(successCallback, errorCallback, "AudioRecorderAPI", "record", duration ? [duration] : []);
-  }
-  
+};
+
+AudioRecorderAPI.prototype.record = function (successCallback, errorCallback, duration) {
+  cordova.exec(successCallback, errorCallback, "AudioRecorderAPI", "record", duration ? [duration] : []);
 };
 
 AudioRecorderAPI.prototype.stop = function (successCallback, errorCallback) {
