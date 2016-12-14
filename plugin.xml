@@ -51,6 +51,18 @@
       <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     </config-file>
     <source-file src="src/android/com/emj365/plugins/AudioRecorderAPI.java" target-dir="src/com/emj365/plugins"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/AudioChunk.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/Bytes.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/Complex.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/FFT.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/IOs.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/PcmAudioFormat.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/PcmAudioHelper.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/PcmAudioOutputStream.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/RiffHeaderData.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/WavAudioFormat.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+    <source-file src="src/android/com/agreeya/audiodetectionapp/WavFileWriter.java" target-dir="src/com/agreeya/audiodetectionapp"/>
+
   </platform>
 
 </plugin>
