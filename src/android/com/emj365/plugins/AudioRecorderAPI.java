@@ -43,11 +43,11 @@ public class AudioRecorderAPI extends CordovaPlugin {
     final Context context = cordova.getActivity().getApplicationContext();
     Integer seconds;
     //URL MEMORIA EXTERNA
-    pcmOutputURL = context.getExternalFilesDir(null)+ "/tempAudio" + ".pcm";
-    waveOutputURL = context.getExternalFilesDir(null) + "/tempAudio" + ".wav";
+    //pcmOutputURL = context.getExternalFilesDir(null)+ "/tempAudio" + ".pcm";
+    //waveOutputURL = context.getExternalFilesDir(null) + "/tempAudio" + ".wav";
     //URL MEMORIA INTERNA (NO ACCESIBLE)
-    //pcmOutputURL = context.getFilesDir().getAbsoluteFile() + "/tempAudio" + ".pcm";
-    //waveOutputURL = context.getFilesDir().getAbsoluteFile() + "/tempAudio" + ".wav";
+    pcmOutputURL = context.getFilesDir().getAbsoluteFile() + "/tempAudio" + ".pcm";
+    waveOutputURL = context.getFilesDir().getAbsoluteFile() + "/tempAudio" + ".wav";
 
     if (action.equals("record")) {
       if (args.length() >= 1) {
