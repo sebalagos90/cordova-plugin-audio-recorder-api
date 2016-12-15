@@ -25,9 +25,11 @@ import java.io.IOException;
 
 public class AudioRecorderAPI extends CordovaPlugin {
 
-  private String pcmOutputURL, waveOutputURL;
-  private CountDownTimer countDowntimer;
-  final int SAMPLE_RATE = 24000;
+  String pcmOutputURL, waveOutputURL;
+  CountDownTimer countDowntimer;
+  int SAMPLE_RATE = 24000;
+  int PCM_BITS = 3;
+  int CHANNELS = 1;
   final String TAG = "AUDIO_RECORDER";
   boolean isRecording;
   AudioRecord audioRecorder;
@@ -55,10 +57,20 @@ public class AudioRecorderAPI extends CordovaPlugin {
       } else {
         seconds = 7;
       }
+      SAMPLE_RATE = args.getInt(1);
+      PCM_BITS = args.getInt(2);
+      CHANNELS = args.getInt(3);
+
+      if (PCM_BITS > 8) {
+        PCM_BITS = AudioFormat.ENCODING_PCM_16BIT;
+      } else {
+        PCM_BITS = AudioFormat.ENCODING_PCM_8BIT;
+      }
+
       recordCallbackContext = callbackContext;
       bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE,
-              AudioFormat.CHANNEL_IN_MONO,
-              AudioFormat.ENCODING_PCM_8BIT);
+              CHANNELS,
+              PCM_BITS);
 
       if(bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE){
         bufferSize = SAMPLE_RATE * 2;
@@ -67,8 +79,8 @@ public class AudioRecorderAPI extends CordovaPlugin {
       audioBuffer = new byte[bufferSize];
       audioRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
               SAMPLE_RATE,
-              AudioFormat.CHANNEL_IN_MONO,
-              AudioFormat.ENCODING_PCM_8BIT,
+              CHANNELS,
+              PCM_BITS,
               bufferSize);
 
       if(audioRecorder.getState() != AudioRecord.STATE_INITIALIZED) {
@@ -116,7 +128,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
           audioRecorder.release();
           rawOutputFile = new File(pcmOutputURL);
           waveOutputFile = new File(waveOutputURL);
-          WavAudioFormat af = new WavAudioFormat(SAMPLE_RATE, 8, 1, true);
+          WavAudioFormat af = new WavAudioFormat(SAMPLE_RATE, PCM_BITS, CHANNELS, true);
           try{
             /*
             Thank you akhilesh2491 and aalap-shah
