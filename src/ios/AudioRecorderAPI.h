@@ -5,6 +5,9 @@
 @interface AudioRecorderAPI : CDVPlugin {
   NSString *recorderFilePath;
   NSNumber *duration;
+  float sampleRate;
+  int linearPCMBits;
+  int numberOfChannels;
   AVAudioRecorder *recorder;
   AVAudioPlayer *player;
   CDVPluginResult *pluginResult;
