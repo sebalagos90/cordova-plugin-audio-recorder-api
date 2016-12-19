@@ -50,7 +50,10 @@
 - (void)record:(CDVInvokedUrlCommand*)command {
     _command = command;
     duration = [_command.arguments objectAtIndex:0];
-    
+    sampleRate = [[_command.arguments objectAtIndex:1] floatValue];
+    linearPCMBits = [[_command.arguments objectAtIndex:2] intValue];
+    numberOfChannels = [[_command.arguments objectAtIndex:3] intValue];
+
     [self.commandDelegate runInBackground:^{
         
         AVAudioSession *audioSession = [AVAudioSession sharedInstance];
@@ -70,10 +73,10 @@
         }
 
         NSDictionary *recordSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                  [NSNumber numberWithFloat: 44100.0],AVSampleRateKey,
+                                  [NSNumber numberWithFloat: sampleRate],AVSampleRateKey,
                                   [NSNumber numberWithInt: kAudioFormatLinearPCM],AVFormatIDKey,
-                                  [NSNumber numberWithInt:16],AVLinearPCMBitDepthKey,
-                                  [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
+                                  [NSNumber numberWithInt:linearPCMBits],AVLinearPCMBitDepthKey,
+                                  [NSNumber numberWithInt: numberOfChannels], AVNumberOfChannelsKey,
                                   [NSNumber numberWithBool:NO],AVLinearPCMIsBigEndianKey,
                                   [NSNumber numberWithBool:NO],AVLinearPCMIsFloatKey,
                                   [NSNumber numberWithInt: AVAudioQualityMin],AVEncoderAudioQualityKey,nil];

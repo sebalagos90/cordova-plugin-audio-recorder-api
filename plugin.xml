@@ -27,7 +27,7 @@
   <!-- ios -->
   <platform name="ios">
     <config-file target="*-Info.plist" parent="NSMicrophoneUsageDescription">
-			<string>La aplicación necesita utilizar el micrófono.</string>
+			<string>Activa tu micrófono para que puedas utilizar los servicios de voz.</string>
 		</config-file>
     <config-file target="config.xml" parent="/*">
       <feature name="AudioRecorderAPI">
