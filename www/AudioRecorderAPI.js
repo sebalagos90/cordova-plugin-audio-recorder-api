@@ -34,7 +34,7 @@ AudioRecorderAPI.prototype.checkRecordPermissions = function (callback) {
 };
 
 AudioRecorderAPI.prototype.record = function (successCallback, errorCallback, duration, sampleRate, bitsEncode, numberOfChannels) {
-  var params = [duration ? duration : 7, sampleRate ? sampleRate : 44100, bitsEncode ? bitsEncode : 16, numberOfChannels ? numberOfChannels : 44100];
+  var params = [duration ? duration : 7, sampleRate ? sampleRate : 44100, bitsEncode ? bitsEncode : 16, numberOfChannels ? numberOfChannels : 2];
   cordova.exec(successCallback, errorCallback, "AudioRecorderAPI", "record", params);
 };
 
