@@ -28,8 +28,10 @@ public class AudioRecorderAPI extends CordovaPlugin {
   String pcmOutputURL, waveOutputURL;
   CountDownTimer countDowntimer;
   int SAMPLE_RATE = 24000;
-  int PCM_BITS = 3;
+  int PCM_BITS = 8;
+  int PCM_BITS_FORMAT = 3;
   int CHANNELS = 1;
+  int CHANNELS_FORMAT = 16;
   final String TAG = "AUDIO_RECORDER";
   boolean isRecording;
   AudioRecord audioRecorder;
@@ -62,15 +64,21 @@ public class AudioRecorderAPI extends CordovaPlugin {
       CHANNELS = args.getInt(3);
 
       if (PCM_BITS > 8) {
-        PCM_BITS = AudioFormat.ENCODING_PCM_16BIT;
+        PCM_BITS_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
       } else {
-        PCM_BITS = AudioFormat.ENCODING_PCM_8BIT;
+        PCM_BITS_FORMAT = AudioFormat.ENCODING_PCM_8BIT;
+      }
+
+      if (CHANNELS > 1) {
+        CHANNELS_FORMAT = AudioFormat.CHANNEL_IN_STEREO;
+      } else {
+        CHANNELS_FORMAT = AudioFormat.CHANNEL_IN_MONO;
       }
 
       recordCallbackContext = callbackContext;
       bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE,
-              CHANNELS,
-              PCM_BITS);
+              CHANNELS_FORMAT,
+              PCM_BITS_FORMAT);
 
       if(bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE){
         bufferSize = SAMPLE_RATE * 2;
@@ -79,8 +87,8 @@ public class AudioRecorderAPI extends CordovaPlugin {
       audioBuffer = new byte[bufferSize];
       audioRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
               SAMPLE_RATE,
-              CHANNELS,
-              PCM_BITS,
+              CHANNELS_FORMAT,
+              PCM_BITS_FORMAT,
               bufferSize);
 
       if(audioRecorder.getState() != AudioRecord.STATE_INITIALIZED) {
