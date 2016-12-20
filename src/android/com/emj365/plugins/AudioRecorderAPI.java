@@ -28,8 +28,8 @@ public class AudioRecorderAPI extends CordovaPlugin {
   String pcmOutputURL, waveOutputURL;
   CountDownTimer countDowntimer;
   int SAMPLE_RATE = 24000;
-  int PCM_BITS = 8;
-  int PCM_BITS_FORMAT = 3;
+  int PCM_BITS = 16;
+  int PCM_BITS_FORMAT = 2;
   int CHANNELS = 1;
   int CHANNELS_FORMAT = 16;
   final String TAG = "AUDIO_RECORDER";
@@ -60,14 +60,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
         seconds = 7;
       }
       SAMPLE_RATE = args.getInt(1);
-      PCM_BITS = args.getInt(2);
       CHANNELS = args.getInt(3);
-
-      if (PCM_BITS > 8) {
-        PCM_BITS_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-      } else {
-        PCM_BITS_FORMAT = AudioFormat.ENCODING_PCM_8BIT;
-      }
 
       if (CHANNELS > 1) {
         CHANNELS_FORMAT = AudioFormat.CHANNEL_IN_STEREO;
@@ -143,7 +136,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
             https://github.com/aalap-shah/Drive
             */
             PcmAudioHelper.convertRawToWav(af, rawOutputFile, waveOutputFile);
-            recordCallbackContext.success(pcmOutputURL);
+            recordCallbackContext.success(waveOutputURL);
           } catch (IOException e) {
             Log.e(TAG, e.toString());
           }
