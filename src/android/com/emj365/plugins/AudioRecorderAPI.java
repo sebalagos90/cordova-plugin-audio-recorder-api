@@ -2,6 +2,7 @@ package com.emj365.plugins;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -94,7 +95,7 @@ public class AudioRecorderAPI extends CordovaPlugin {
       audioRecorder.startRecording();
       isRecording = true;
       
-      PluginResult pluginResult = new PluginResult("recording");
+      PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "recording");
       pluginResult.setKeepCallback(true);
       recordCallbackContext.sendPluginResult(pluginResult);
 
