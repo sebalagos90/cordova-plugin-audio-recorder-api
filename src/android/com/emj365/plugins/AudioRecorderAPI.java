@@ -93,6 +93,10 @@ public class AudioRecorderAPI extends CordovaPlugin {
       Log.i(TAG, "Start recording");
       audioRecorder.startRecording();
       isRecording = true;
+      
+      PluginResult pluginResult = new PluginResult("recording");
+      pluginResult.setKeepCallback(true);
+      recordCallbackContext.sendPluginResult(pluginResult);
 
       recordingThread = new Thread(new Runnable() {
 

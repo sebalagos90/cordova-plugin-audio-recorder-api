@@ -104,7 +104,10 @@
             NSLog(@"recordForDuration failed");
             return;
         }
-        
+
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"recording"];
+        [pluginResult setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
     }];
 }
 
